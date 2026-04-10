@@ -2,6 +2,8 @@
 
 Payment gateway & proxy detector for fakeshop OSINT investigations - by Francesco Sercia
 
+<img width="397" height="432" alt="image" src="https://github.com/user-attachments/assets/2ab976c1-d38c-47e4-a412-e8a61b0cbc6b" />
+
 ## What it detects
 
 ### Payment Gateways (+ Merchant IDs)
