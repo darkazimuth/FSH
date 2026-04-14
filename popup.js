@@ -17,6 +17,7 @@ function render() {
       const data = resp.data;
       const s = data.stripe;
       const a = data.amazon;
+      const p = data.paypal || {};
       let hasData = false;
 
       // 1. Shell Company
@@ -41,11 +42,22 @@ function render() {
       }
 
       // 3. Amazon Pay
-      let amazonHtml = fld("Partner ID (URL)", a.partnerId) + 
+      let amazonHtml = fld("Partner ID (URL)", a.partnerId) +
                        fld("Merchant ID (JSON)", a.merchantId);
       if (amazonHtml) {
         document.getElementById("fields-amazon").innerHTML = amazonHtml;
         document.getElementById("sec-amazon").style.display = "block";
+        hasData = true;
+      }
+
+      // 4. PayPal
+      let paypalHtml = fld("Merchant ID", p.merchantID) +
+                       fld("Proxy Site", p.proxySite) +
+                       fld("Target Cancel URL", p.targetCancelUrl) +
+                       fld("Payment Token", p.paymentToken);
+      if (paypalHtml) {
+        document.getElementById("fields-paypal").innerHTML = paypalHtml;
+        document.getElementById("sec-paypal").style.display = "block";
         hasData = true;
       }
 

@@ -17,6 +17,29 @@
     if (pk) {
       chrome.runtime.sendMessage({ type: "STRIPE_DATA", payload: { pk: pk[1] } });
     }
+
+    // PayPal: estrae merchantID e targetCancelUrl dal DOM (incontextData)
+    if (/paypal\.com\/webapps\/hermes/i.test(href)) {
+      const html = document.documentElement.innerHTML;
+      const merchantMatch = html.match(/"merchantID"\s*:\s*"([^"]+)"/);
+      const cancelMatch = html.match(/"targetCancelUrl"\s*:\s*"([^"]+)"/);
+      const tokenMatch = html.match(/"paymentToken"\s*:\s*"([^"]+)"/);
+      if (merchantMatch || cancelMatch) {
+        let proxyDomain = "";
+        if (cancelMatch) {
+          try { proxyDomain = new URL(cancelMatch[1]).hostname; } catch (e) {}
+        }
+        chrome.runtime.sendMessage({
+          type: "PAYPAL_DATA",
+          payload: {
+            merchantID: merchantMatch ? merchantMatch[1] : undefined,
+            targetCancelUrl: cancelMatch ? cancelMatch[1] : undefined,
+            proxySite: proxyDomain || undefined,
+            paymentToken: tokenMatch ? tokenMatch[1] : undefined
+          }
+        });
+      }
+    }
   }
 
   window.addEventListener("message", (e) => {

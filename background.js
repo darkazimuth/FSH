@@ -2,7 +2,7 @@ const tabData = {};
 
 function ensureTab(tabId) {
   if (!tabData[tabId]) {
-    tabData[tabId] = { stripe: {}, amazon: {} };
+    tabData[tabId] = { stripe: {}, amazon: {}, paypal: {} };
   }
   return tabData[tabId];
 }
@@ -27,6 +27,12 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     store.amazon = { ...store.amazon, ...msg.payload };
     chrome.action.setBadgeText({ text: "!", tabId });
     chrome.action.setBadgeBackgroundColor({ color: "#ff9900", tabId });
+  }
+
+  if (msg.type === "PAYPAL_DATA") {
+    store.paypal = { ...store.paypal, ...msg.payload };
+    chrome.action.setBadgeText({ text: "!", tabId });
+    chrome.action.setBadgeBackgroundColor({ color: "#003087", tabId });
   }
 });
 
