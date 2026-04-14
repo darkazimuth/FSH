@@ -9,6 +9,7 @@ Payment gateway & proxy detector for fakeshop OSINT investigations - by Francesc
 ### Payment Gateways (+ Merchant IDs)
 - Stripe — pk_live_, pk_test_, acct_, cs_, pi_ tokens
 - Amazon Pay — merchant_id, partner_id
+- PayPal — merchant_id, targetCancelUrl
 
 ### TA Infrastructure
 - Shell Company and related infos
