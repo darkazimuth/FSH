@@ -22,16 +22,14 @@ function render() {
 
       // 1. Shell Company
       let shellHtml = fld("Company", s.shell_company) +
-                      fld("Proxy Site", s.business_url) +
+                      fld("Proxy Site", s.business_url || p.proxySite) +
                       fld("Country", s.country) +
                       fld("Registered Office", s.merchant_of_record_country) +
                       fld("Support Email", s.support_email) +
                       fld("Support Phone", s.support_phone);
-      if (shellHtml) {
-        document.getElementById("fields-shell").innerHTML = shellHtml;
-        document.getElementById("sec-shell").style.display = "block";
-        hasData = true;
-      }
+      document.getElementById("fields-shell").innerHTML = shellHtml;
+      document.getElementById("sec-shell").style.display = "block";
+      if (shellHtml) hasData = true;
 
       // 2. Stripe
       let stripeHtml = fld("Account ID", s.acct) + fld("Public Key", s.pk);
@@ -52,7 +50,6 @@ function render() {
 
       // 4. PayPal
       let paypalHtml = fld("Merchant ID", p.merchantID) +
-                       fld("Proxy Site", p.proxySite) +
                        fld("Target Cancel URL", p.targetCancelUrl) +
                        fld("Payment Token", p.paymentToken);
       if (paypalHtml) {
