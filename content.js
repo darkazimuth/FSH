@@ -1,14 +1,14 @@
 (function () {
   function scan() {
     const href = window.location.href;
-    
+
     // Amazon: estrae externalPartnerId dall'URL
     const urlParams = new URLSearchParams(window.location.search);
     const partnerId = urlParams.get('externalPartnerId');
     if (partnerId) {
-      chrome.runtime.sendMessage({ 
-        type: "AMAZON_DATA", 
-        payload: { partnerId: partnerId } 
+      chrome.runtime.sendMessage({
+        type: "AMAZON_DATA",
+        payload: { partnerId: partnerId }
       });
     }
 
@@ -37,11 +37,12 @@
   }
 
   window.addEventListener("message", (e) => {
-    if (e.data && e.data.__fsh) {
-      const data = e.data.data;
-      if (!data) return;
+    if (!e.data) return;
 
-      // Response STRIPE
+    // Response STRIPE / AMAZON
+    if (e.data.__fsh && e.data.data) {
+      const data = e.data.data;
+
       if (data.account_settings) {
         const s = data.account_settings;
         chrome.runtime.sendMessage({
@@ -58,7 +59,6 @@
         });
       }
 
-      // Response AMAZON PAY (JSON intercettato)
       if (data.amazonPayMerchantId) {
         chrome.runtime.sendMessage({
           type: "AMAZON_DATA",
@@ -68,7 +68,7 @@
     }
 
     // PayPal Logger SDK
-    if (e.data.paypalLogger) {
+    if (e.data.__fsh && e.data.paypalLogger) {
       const pl = e.data.paypalLogger;
       let proxyDomain = "";
       if (pl.merchant_domain) {
@@ -83,6 +83,7 @@
         }
       });
     }
+  });
 
   scan();
   setInterval(scan, 2000);
