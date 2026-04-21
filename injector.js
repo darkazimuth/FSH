@@ -2,6 +2,20 @@
   if (window.__fshInjected) return;
   window.__fshInjected = true;
 
+  function extractPaypalLogger(body) {
+    try {
+      const parsed = typeof body === "string" ? JSON.parse(body) : null;
+      if (!parsed || !Array.isArray(parsed.tracking)) return;
+      const t = parsed.tracking.find(e => e.seller_id || e.client_id);
+      if (!t) return;
+      window.postMessage({ __fsh: 1, paypalLogger: {
+        seller_id: t.seller_id,
+        client_id: t.client_id,
+        merchant_domain: t.merchant_domain
+      }}, "*");
+    } catch (e) {}
+  }
+
   const _fetch = window.fetch;
   window.fetch = function (input, init) {
     const url = typeof input === "string" ? input : (input && input.url) || "";
@@ -14,6 +28,11 @@
         }).catch(() => {});
       }).catch(() => {});
     }
+
+    if (/xoplatform\/logger\/api\/logger/i.test(url)) {
+      extractPaypalLogger(init && init.body);
+    }
+
     return p;
   };
 
@@ -23,7 +42,10 @@
     this.__fshUrl = (typeof url === "string") ? url : "";
     return _open.apply(this, arguments);
   };
-  XMLHttpRequest.prototype.send = function () {
+  XMLHttpRequest.prototype.send = function (body) {
+    if (/xoplatform\/logger\/api\/logger/i.test(this.__fshUrl || "")) {
+      extractPaypalLogger(body);
+    }
     this.addEventListener("load", function () {
       const url = this.__fshUrl || "";
       if (/api\.stripe\.com|amazonpayMerchantId/i.test(url)) {

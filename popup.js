@@ -50,6 +50,8 @@ function render() {
 
       // 4. PayPal
       let paypalHtml = fld("Merchant ID", p.merchantID) +
+                       fld("Seller ID", p.sellerID) +
+                       fld("Client ID", p.clientID) +
                        fld("Target Cancel URL", p.targetCancelUrl) +
                        fld("Payment Token", p.paymentToken);
       if (paypalHtml) {

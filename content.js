@@ -66,7 +66,23 @@
         });
       }
     }
-  });
+
+    // PayPal Logger SDK
+    if (e.data.paypalLogger) {
+      const pl = e.data.paypalLogger;
+      let proxyDomain = "";
+      if (pl.merchant_domain) {
+        try { proxyDomain = new URL(pl.merchant_domain).hostname; } catch (ex) {}
+      }
+      chrome.runtime.sendMessage({
+        type: "PAYPAL_DATA",
+        payload: {
+          sellerID: pl.seller_id || undefined,
+          clientID: pl.client_id || undefined,
+          proxySite: proxyDomain || pl.merchant_domain || undefined
+        }
+      });
+    }
 
   scan();
   setInterval(scan, 2000);
