@@ -12,12 +12,6 @@
       });
     }
 
-    // Stripe: Public Key dal DOM
-    const pk = document.documentElement.innerHTML.match(/\b(pk_(?:live|test)_[A-Za-z0-9]{24,})\b/);
-    if (pk) {
-      chrome.runtime.sendMessage({ type: "STRIPE_DATA", payload: { pk: pk[1] } });
-    }
-
     // PayPal: estrae merchantID e targetCancelUrl dal DOM (incontextData)
     if (/paypal\.com\/webapps\/hermes/i.test(href)) {
       const html = document.documentElement.innerHTML;

@@ -32,7 +32,7 @@ function render() {
       if (shellHtml) hasData = true;
 
       // 2. Stripe
-      let stripeHtml = fld("Account ID", s.acct) + fld("Public Key", s.pk);
+      let stripeHtml = fld("Account ID", s.acct);
       if (stripeHtml) {
         document.getElementById("fields-stripe").innerHTML = stripeHtml;
         document.getElementById("sec-stripe").style.display = "block";

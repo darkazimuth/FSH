@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "FakeShop Hunter",
-  "version": "2.3.1",
+  "version": "2.3.2",
   "author": "Francesco Sercia",
   "description": "Payment gateway & shell company detector - by Francesco Sercia",
   "permissions": ["activeTab", "scripting", "storage"],
