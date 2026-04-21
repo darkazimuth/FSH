@@ -2,9 +2,9 @@
   if (window.__fshInjected) return;
   window.__fshInjected = true;
 
-  function extractPaypalLogger(body) {
+  function parsePaypalBody(str) {
     try {
-      const parsed = typeof body === "string" ? JSON.parse(body) : null;
+      const parsed = JSON.parse(str);
       if (!parsed || !Array.isArray(parsed.tracking)) return;
       const t = parsed.tracking.find(e => e.seller_id || e.client_id);
       if (!t) return;
@@ -16,6 +16,16 @@
     } catch (e) {}
   }
 
+  function extractPaypalLogger(body) {
+    if (!body) return;
+    if (typeof body === "string") {
+      parsePaypalBody(body);
+    } else if (body instanceof Blob) {
+      body.text().then(parsePaypalBody).catch(() => {});
+    }
+  }
+
+  // Intercetta fetch
   const _fetch = window.fetch;
   window.fetch = function (input, init) {
     const url = typeof input === "string" ? input : (input && input.url) || "";
@@ -36,6 +46,7 @@
     return p;
   };
 
+  // Intercetta XHR
   const _open = XMLHttpRequest.prototype.open;
   const _send = XMLHttpRequest.prototype.send;
   XMLHttpRequest.prototype.open = function (method, url) {
@@ -56,5 +67,14 @@
       }
     });
     return _send.apply(this, arguments);
+  };
+
+  // Intercetta sendBeacon (usato da PayPal logger)
+  const _sendBeacon = navigator.sendBeacon.bind(navigator);
+  navigator.sendBeacon = function (url, data) {
+    if (/xoplatform\/logger\/api\/logger/i.test(url)) {
+      extractPaypalLogger(data);
+    }
+    return _sendBeacon(url, data);
   };
 })();
